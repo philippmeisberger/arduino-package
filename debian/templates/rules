@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_strip_nondeterminism:
+	# skip dh_strip_nondeterminism otherwise package building is aborted after
+	# at least 30 minutes with strange errors
+
+override_dh_strip:
+	# skip dh_strip otherwise following error occurs:
+	# Unable to recognise the format of the input file

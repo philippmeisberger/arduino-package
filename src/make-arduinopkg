@@ -1,0 +1,131 @@
+#!/bin/sh
+set -e
+
+VERSION='1.0'
+
+## Parse optional arguments
+if [ "${1}" = "--version" ]; then
+    echo "$(basename "${0}") ${VERSION}"
+    exit 0
+elif [ "${1}" = "--help" ]; then
+    echo "Usage: $(basename "${0}") [OPTION] FILE"
+    echo ""
+    echo "Builds Debian package from Arduino binary distribution"
+    echo ""
+    echo "Options:"
+    echo ""
+    echo "--help       Display this help message and exit"
+    echo "--version    Print version information and exit"
+    exit 0
+fi
+
+## Parse FILE argument
+if [ -z "${1}" ]; then
+    echo "Error: Missing FILE argument!"
+    exit 1
+elif [ ! -e "${1}" ]; then
+    echo "Error: The file \"${1}\" does not exist!"
+    exit 1
+elif [ ! -r "${1}" ]; then
+    echo "Error: The file \"${1}\" is not readable!"
+    exit 1
+fi
+
+## Try to use environment variable TMPDIR
+if [ -z "${TMPDIR}" ]; then
+    TEMP_DIR="/tmp"
+else
+    TEMP_DIR="${TMPDIR}"
+fi
+
+PACKAGE_ROOT_DIR="${TEMP_DIR}/arduino-package"
+PACKAGE_LIB_DIR="${PACKAGE_ROOT_DIR}/usr/lib"
+DEBIAN_DIR="${PACKAGE_ROOT_DIR}/debian"
+CURRENT_DIR=$(pwd)
+
+## Extract Arduino edition
+ARDUINO_NAME="$(basename "${1}" | cut -d '-' -f 1-2)"
+ARDUINO="arduino"
+ARDUINO_DIR="${PACKAGE_LIB_DIR}/${ARDUINO}"
+
+## Extract archive in "lib" directory
+mkdir -p "${PACKAGE_LIB_DIR}"
+tar -v -C "${PACKAGE_LIB_DIR}" -xf "${1}"
+
+## Use system JRE
+rm -rf "${PACKAGE_LIB_DIR}/${ARDUINO_NAME}/java"
+
+## Remove version from directory name
+mv "${PACKAGE_LIB_DIR}/${ARDUINO_NAME}/" "${ARDUINO_DIR}"
+
+## Copy Debian package files
+mkdir "${DEBIAN_DIR}/"
+cp -R /usr/share/arduino-package/debian "${PACKAGE_ROOT_DIR}"
+
+## Desktop entry
+sed -e "s,<BINARY_LOCATION>,${ARDUINO},g" -e "s,<ICON_NAME>,${ARDUINO},g" "${ARDUINO_DIR}/lib/desktop.template" > "${DEBIAN_DIR}/${ARDUINO}.desktop"
+
+cat << EOF > "${DEBIAN_DIR}/${ARDUINO}.dirs"
+usr/bin
+usr/lib/${ARDUINO}
+usr/share/pixmaps
+usr/share/appdata
+EOF
+
+cat << EOF > "${DEBIAN_DIR}/${ARDUINO}.install"
+usr/lib/${ARDUINO}
+debian/${ARDUINO}.desktop usr/share/applications/
+usr/share/pixmaps
+EOF
+
+cat << EOF > "${DEBIAN_DIR}/${ARDUINO}.links"
+usr/lib/${ARDUINO}/arduino usr/bin/${ARDUINO}
+EOF
+
+## Icons
+mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/pixmaps"
+mv "${ARDUINO_DIR}/lib/icons/" "${PACKAGE_ROOT_DIR}/usr/share/pixmaps/${ARDUINO}/"
+mv "${ARDUINO_DIR}/lib/arduino.png" "${PACKAGE_ROOT_DIR}/usr/share/pixmaps/${ARDUINO}.png"
+
+## MIME info
+mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/appdata"
+mv "${ARDUINO_DIR}/lib/arduino-arduinoide.xml" "${DEBIAN_DIR}/${ARDUINO}.sharedmimeinfo"
+mv "${ARDUINO_DIR}/lib/appdata.xml" "${PACKAGE_ROOT_DIR}/usr/share/appdata/${ARDUINO}.appdata.xml"
+
+## Insert package name in control file
+sed -i "s/ARDUINO/${ARDUINO}/g" "${DEBIAN_DIR}/control"
+
+## Insert maintainer name in control file
+if [ -n "${DEBFULLNAME}" ]; then
+    MAINTAINER_NAME="${DEBFULLNAME}"
+else
+    MAINTAINER_NAME="$(getent passwd $(whoami) | cut -d ':' -f 5 | cut -d, -f 1)"
+fi
+
+sed -i "s/MAINTAINER_NAME/${MAINTAINER_NAME}/" "${DEBIAN_DIR}/control"
+
+## Insert maintainer mail in control file
+if [ -n "${DEBEMAIL}" ]; then
+    MAINTAINER_MAIL="${DEBEMAIL}"
+else
+    MAINTAINER_MAIL="$(whoami)@$(hostname --fqdn )"
+fi
+
+sed -i "s/MAINTAINER_MAIL/${MAINTAINER_MAIL}/" "${DEBIAN_DIR}/control"
+
+## Read Arduino version
+ARDUINO_VERSION="$(cat "${ARDUINO_DIR}/lib/version.txt")"
+
+## Create changelog
+cd ${PACKAGE_ROOT_DIR}
+dch --create --package "${ARDUINO}" -v "${ARDUINO_VERSION}" "This package was automatically created by arduino-package ${VERSION}."
+dch --release ""
+
+## Build the package (binary only)
+dpkg-buildpackage -b -uc -us
+mv ../arduino*.deb "${CURRENT_DIR}/"
+
+## Clean up
+cd ..
+rm -rf "${PACKAGE_ROOT_DIR}"
+exit 0

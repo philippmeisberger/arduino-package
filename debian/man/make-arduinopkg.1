@@ -1,0 +1,34 @@
+.TH make-arduinopkg 1 "Jan 2019" "" "Arduino Packer"
+
+.SH NAME
+make-arduinopkg \- Builds Debian package from Arduino binary distribution
+
+.SH SYNOPSIS
+.nf
+.fam C
+\fBmake-arduinopkg\fP [\fIFILE\fR]
+.fam T
+.fi
+
+.SH DESCRIPTION
+\fBmake-arduinopkg\fP builds a Debian package from the given Arduino binary distribution FILE.
+.br
+Download an Arduino package from \fBhttps://www.arduino.cc\fP and execute \fBmake-arduinopkg\fP \fIFILE\fR with the downloaded file. The Debian package is built in the current directory.
+.br
+The program requires about 300 MB free disk space in a temporary directory. The default directory is \fI/tmp\fR but you can change it by setting the environment variable \fITMPDIR\fR.
+
+.SH EXAMPLE
+After you downloaded Arduino IDE from the website you need just to invoke make-arduinopkg to build the Debian package:
+
+    make-arduinopkg /path/to/directory/arduino-1.8.8-linux64.tar.xz
+
+This generates a Debian package in the current directory. It takes some time! After it has finished the resulting package can be installed with:
+
+    dpkg -i arduino_1.8.8_amd64.deb
+
+When finished the Debian package and the downloaded .tar.xz file can be removed.
+
+.SH AUTHOR
+Philipp Meisberger <team@pm-codeworks.de>
+
+Please send bug reports to this mail address. Visit http://www.pm-codeworks.de for more interesting projects.

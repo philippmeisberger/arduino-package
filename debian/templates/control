@@ -1,0 +1,18 @@
+Source: ARDUINO
+Priority: extra
+Maintainer: MAINTAINER_NAME <MAINTAINER_MAIL>
+Build-Depends: debhelper (>= 9)
+Section: devel
+Standards-Version: 3.9.8
+Homepage: https://www.arduino.cc
+
+Package: ARDUINO
+Architecture: any
+Depends: default-jre, ${shlibs:Depends}, ${misc:Depends}
+Description: Arduino IDE
+ The open-source Arduino Software (IDE) makes it easy to write code and
+ upload it to the board. It runs on Windows, Mac OS X, and Linux. The
+ environment is written in Java and based on Processing and other
+ open-source software.
+ .
+ This software can be used with any Arduino board.

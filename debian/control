@@ -1,0 +1,17 @@
+Source: arduino-package
+Priority: extra
+Maintainer: Philipp Meisberger <team@pm-codeworks.de>
+Build-Depends: debhelper (>= 9), bash-completion
+Section: shells
+Standards-Version: 3.9.8
+Vcs-Git: https://github.com/philippmeisberger/arduino-package.git
+
+Package: arduino-package
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, fakeroot, make, devscripts
+Description: Utility for creating Arduino Debian packages
+ This package provides the capability to build a Debian package from an
+ Arduino binary distribution by running make-arduinopkg <Arduino archive file>.
+ .
+ Download the archive file from
+ https://www.arduino.cc
