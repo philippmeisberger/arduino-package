@@ -1,7 +1,7 @@
 Arduino Package
 ===============
 
-[![Build Status](https://travis-ci.org/philippmeisberger/arduino-package.svg?branch=master)](https://travis-ci.org/philippmeisberger/ardunio-package)
+[![Build Status](https://travis-ci.org/philippmeisberger/arduino-package.svg?branch=master)](https://travis-ci.org/philippmeisberger/arduino-package)
 
 Utility to build Debian package from Arduino binary distribution.
 
