@@ -69,6 +69,7 @@ cat << EOF > "${DEBIAN_DIR}/${ARDUINO}.dirs"
 usr/bin
 usr/lib/${ARDUINO}
 usr/share/pixmaps
+usr/share/icons
 usr/share/appdata
 EOF
 
@@ -76,6 +77,7 @@ cat << EOF > "${DEBIAN_DIR}/${ARDUINO}.install"
 usr/lib/${ARDUINO}
 debian/${ARDUINO}.desktop usr/share/applications/
 usr/share/pixmaps
+usr/share/icons
 EOF
 
 cat << EOF > "${DEBIAN_DIR}/${ARDUINO}.links"
@@ -83,9 +85,11 @@ usr/lib/${ARDUINO}/arduino usr/bin/${ARDUINO}
 EOF
 
 ## Icons
+mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/icons"
+mv "${ARDUINO_DIR}/lib/icons/" "${ARDUINO_DIR}/lib/hicolor/"
+mv "${ARDUINO_DIR}/lib/hicolor/" "${PACKAGE_ROOT_DIR}/usr/share/icons/"
 mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/pixmaps"
-mv "${ARDUINO_DIR}/lib/icons/" "${PACKAGE_ROOT_DIR}/usr/share/pixmaps/${ARDUINO}/"
-mv "${ARDUINO_DIR}/lib/arduino.png" "${PACKAGE_ROOT_DIR}/usr/share/pixmaps/${ARDUINO}.png"
+mv "${ARDUINO_DIR}/lib/arduino_small.png" "${PACKAGE_ROOT_DIR}/usr/share/pixmaps/${ARDUINO}.png"
 
 ## MIME info
 mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/appdata"
