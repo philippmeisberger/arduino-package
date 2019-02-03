@@ -86,10 +86,10 @@ EOF
 
 ## Icons
 mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/icons"
-mv "${ARDUINO_DIR}/lib/icons/" "${ARDUINO_DIR}/lib/hicolor/"
+cp -R "${ARDUINO_DIR}/lib/icons/" "${ARDUINO_DIR}/lib/hicolor/"
 mv "${ARDUINO_DIR}/lib/hicolor/" "${PACKAGE_ROOT_DIR}/usr/share/icons/"
 mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/pixmaps"
-mv "${ARDUINO_DIR}/lib/arduino_small.png" "${PACKAGE_ROOT_DIR}/usr/share/pixmaps/${ARDUINO}.png"
+ln -s "${ARDUINO_DIR}/lib/arduino_small.png" "${PACKAGE_ROOT_DIR}/usr/share/pixmaps/${ARDUINO}.png"
 
 ## MIME info
 mkdir -p "${PACKAGE_ROOT_DIR}/usr/share/appdata"
