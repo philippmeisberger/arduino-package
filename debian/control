@@ -5,6 +5,7 @@ Build-Depends: debhelper (>= 9), bash-completion
 Section: shells
 Standards-Version: 3.9.8
 Vcs-Git: https://github.com/philippmeisberger/arduino-package.git
+Vcs-Browser: https://github.com/philippmeisberger/arduino-package
 
 Package: arduino-package
 Architecture: all
