@@ -10,7 +10,7 @@ Building
 
 Install required packages
 
-    ~# apt-get install git devscripts
+    ~# apt-get install git devscripts debhelper
 
 Clone this repository
 
