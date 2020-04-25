@@ -3,7 +3,7 @@ sudo: required
 
 env:
   global:
-    - ARDUINO_VERSION=1.8.8
+    - ARDUINO_VERSION=1.8.12
     - ARDUINO_FILE=arduino-${ARDUINO_VERSION}-linux64.tar.xz
 
 before_install:
